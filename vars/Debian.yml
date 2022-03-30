@@ -1,0 +1,10 @@
+---
+
+iptables_etc_dir: /etc/iptables/
+iptables_config_file: "{{ iptables_etc_dir }}/rules.v"
+
+iptables_pkg:
+  - netfilter-persistent
+  - iptables-persistent
+  - conntrack
+  - fail2ban

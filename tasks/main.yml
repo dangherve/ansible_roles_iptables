@@ -1,0 +1,27 @@
+---
+
+- name: Include variables depending OS
+  include_vars: " {{ ansible_os_family | default('default') }}.yml"
+
+- name: Check if iptables fail2ban rules are loaded
+  shell: iptables -L INPUT -nv
+  register: iptables_fail2ban_rules
+  changed_when: False
+
+- name: Install firewall's package
+  apt: name={{ iptables_pkg }} state=present update_cache=yes
+  when: ansible_os_family=="Debian"
+
+- name: Generate config file iptables
+  template:
+    src: "iptables.v{{ item }}.j2"
+    dest: "{{ iptables_config_file }}{{ item }}"
+    backup: yes
+    owner: root
+    group: root
+    mode: 400
+  notify:
+    - reload iptables
+    - restart fail2ban
+  with_items: ['4','6']
+

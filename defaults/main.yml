@@ -1,0 +1,32 @@
+---
+
+conntrack_max: 655360
+
+iptables_v4_filter_input_policy: ACCEPT
+iptables_v4_filter_forward_policy: ACCEPT
+iptables_v4_filter_output_policy: ACCEPT
+
+iptables_v4_nat_input_policy: ACCEPT
+iptables_v4_nat_output_policy: ACCEPT
+iptables_v4_nat_prerouting_policy: ACCEPT
+iptables_v4_nat_postrouting_policy: ACCEPT
+
+iptables_v4_filter_chain: []
+
+iptables_v4_filter_rules: []
+iptables_v4_nat_rules: []
+
+
+iptables_v6_filter_input_policy: ACCEPT
+iptables_v6_filter_forward_policy: ACCEPT
+iptables_v6_filter_output_policy: ACCEPT
+
+iptables_v6_nat_input_policy: ACCEPT
+iptables_v6_nat_output_policy: ACCEPT
+iptables_v6_nat_prerouting_policy: ACCEPT
+iptables_v6_nat_postrouting_policy: ACCEPT
+
+iptables_v6_filter_chain: []
+
+iptables_v6_filter_rules: []
+iptables_v6_nat_rules: []

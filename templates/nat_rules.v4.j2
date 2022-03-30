@@ -1,0 +1,41 @@
+
+*nat
+:PREROUTING {{ iptables_v4_nat_prerouting_policy }}
+:INPUT {{ iptables_v4_nat_input_policy }}
+:OUTPUT {{ iptables_v4_nat_output_policy }}
+:POSTROUTING {{ iptables_v4_nat_postrouting_policy }}
+
+{% for rules in iptables_v4_nat_rules %}
+
+{% if true -%}-A {% endif -%}
+{# nat table choosen depending on target #}
+{%- if rules.target is defined and (rules.target=="DNAT" or rules.target == "REDIRECT") %} PREROUTING {% endif-%}
+{%- if (rules.target is defined and rules.target=="SNAT")  %} POSTROUTING {% endif-%}
+{%- if (rules.target is defined and rules.target=="MASQUERADE")  %} POSTROUTING {% endif-%}
+{# Network (L3 OSI Layer / IP) conditions filter #}
+{%- if rules.negate_src is defined and rules.negate_src==true%} !{% endif -%}
+{%- if rules.srcs is defined %} -s {{ rules.srcs | join(',') }}{% endif -%}
+{%- if rules.negate_dest is defined and rules.negate_dest==true%} !{% endif -%}
+{%- if rules.dest is defined %} -d {{ rules.dest }}{% endif -%}
+{# TRANSPORT (proto/port) conditions filtering #}
+{%- if rules.port is defined or rules.proto is defined %} -p {{ rules.proto | default("tcp") }}
+{%- if rules.negate_port is defined and rules.negate_port==true%} !{% endif -%}
+{%- if rules.port is defined %} --dport {{ rules.port }}{% endif %}
+{% endif -%}
+{# Interface condition Filter only available from out interface#}
+{%-if rules.target is defined and (rules.target=="MASQUERADE" or rules.target=="SNAT") %}
+{%- if rules.if_out is defined or rules.out is defined %} -o {{ rules.if_out | default (  rules.out  ) }}{% endif -%}
+{% endif -%}
+{%-if rules.target is defined and (rules.target=="DNAT" or rules.target == "REDIRECT") %}
+{%- if rules.if_in is defined or rules.in is defined %} -i {{ rules.if_in | default (  rules.in  ) }}{% endif -%}
+{% endif -%}
+
+{% if true %} -j {{ rules.target }}{% endif -%}
+{%- if rules.target=="DNAT" %} --to-destination {{ rules.nat | default(rules.nat_dest) }} {% endif -%}
+{%- if rules.target=="SNAT"  %} --to-source  {{ rules.nat | default(rules.nat_src) }} {% endif -%}
+{%- if rules.to_port is defined %} --to-port {{ rules.to_port }}{% endif -%}
+{%- if rules.target=="MASQUERADE"  %}  {% endif-%}
+{% if true %} -m comment --comment "{{ rules.name }}"{% endif %}
+{%-endfor %}
+
+COMMIT

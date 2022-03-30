@@ -1,0 +1,13 @@
+---
+
+- name: reload iptables
+  command: /etc/init.d/netfilter-persistent reload
+  when: ansible_os_family=="Debian"
+
+- name: reload iptables
+  action: service name=iptables state=reloaded
+  when: ansible_os_family=="RedHat"
+
+- name: restart fail2ban
+  action: service name=fail2ban state=restarted
+  when: iptables_fail2ban_rules.stdout.find("fail2ban")==-1
