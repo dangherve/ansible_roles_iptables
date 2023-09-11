@@ -3,6 +3,11 @@
 - name: Include variables depending OS
   include_vars: " {{ ansible_os_family | default('default') }}.yml"
 
+- include_tasks: debian.yml
+  when: ansible_os_family == 'Debian'
+
+
+
 - name: Check if iptables fail2ban rules are loaded
   shell: iptables -L INPUT -nv
   register: iptables_fail2ban_rules
