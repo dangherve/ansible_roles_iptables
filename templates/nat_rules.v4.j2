@@ -13,13 +13,13 @@
 {%- if (rules.target is defined and rules.target=="SNAT")  %} POSTROUTING {% endif-%}
 {%- if (rules.target is defined and rules.target=="MASQUERADE")  %} POSTROUTING {% endif-%}
 {# Network (L3 OSI Layer / IP) conditions filter #}
-{%- if rules.negate_src is defined and rules.negate_src==true%} !{% endif -%}
+{%- if rules.negate_src is defined and rules.negate_src==true %} !{% endif -%}
 {%- if rules.srcs is defined %} -s {{ rules.srcs | join(',') }}{% endif -%}
-{%- if rules.negate_dest is defined and rules.negate_dest==true%} !{% endif -%}
+{%- if rules.negate_dest is defined and rules.negate_dest==true %} !{% endif -%}
 {%- if rules.dest is defined %} -d {{ rules.dest }}{% endif -%}
 {# TRANSPORT (proto/port) conditions filtering #}
 {%- if rules.port is defined or rules.proto is defined %} -p {{ rules.proto | default("tcp") }}
-{%- if rules.negate_port is defined and rules.negate_port==true%} !{% endif -%}
+{%- if rules.negate_port is defined and rules.negate_port==true %} !{% endif -%}
 {%- if rules.port is defined %} --dport {{ rules.port }}{% endif %}
 {% endif -%}
 {# Interface condition Filter only available from out interface#}

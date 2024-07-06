@@ -13,31 +13,31 @@
 {% for rules in iptables_v4_filter_rules -%}
 {% if true -%}-A {{ rules.chain | default("INPUT") }}{% endif -%}
 {# Network (L3 OSI Layer / IP) conditions filter #}
-{%- if rules.negate_src is defined and rules.negate_src==true%} !{% endif -%}
+{%- if rules.negate_src is defined and rules.negate_src==true %} !{% endif -%}
 {%- if rules.srcs is defined %} -s {{ rules.srcs | join(",") }}{% endif -%}
-{%- if rules.negate_dest is defined and rules.negate_src==true%} !{% endif -%}
+{%- if rules.negate_dest is defined and rules.negate_src==true %} !{% endif -%}
 {%- if rules.dest is defined %} -d {{ rules.dest }}{% endif -%}
 {# TRANSPORT (proto/port) conditions filtering #}
 {%- if rules.port is defined or rules.proto is defined %} -p {{ rules.proto | default("tcp") }}
-{%- if rules.negate_port is defined and rules.negate_port==true%} !{% endif -%}
+{%- if rules.negate_port is defined and rules.negate_port==true %} !{% endif -%}
 {%- if rules.port is defined %} --dport {{ rules.port }}{% endif %}
 {%- if rules.ports is defined %} -m multiport --dports {{ rules.ports | join(",") }}{% endif %}
-{%- if rules.icmptype is defined %} --icmp-type {{ rules.icmptype }}{%endif%}
-{%endif -%}
+{%- if rules.icmptype is defined %} --icmp-type {{ rules.icmptype }}{% endif %}
+{% endif -%}
 {# Interface condition Filter#}
 {%- if rules.if_in is defined or rules.in is defined %} -i {{ rules.if_in | default (  rules.in  ) }}{% endif -%}
 {%- if rules.if_out is defined or rules.out is defined %} -o {{ rules.if_in | default (  rules.out  ) }}{% endif -%}
 {# Module rules #}
 {%- if rules.module is defined %}
 {%- for module in rules.module %} -m {{ module.name }}
-{%- if module.name=="state"%} {%if module.value is defined %} --state {{ module.value }}{% endif %}{%endif -%}
-{%- if module.name=="conntrack"%} {%if module.value is defined %} --ctstate {{ module.value}}{% endif %}{%endif -%}
-{%- if module.name=="helper"%} {%if module.value is defined %} --helper {{ module.value}}{% endif %}{%endif -%}
-{%- if module.name=="limit"%} {%if module.value is defined %} --limit {{ module.value}}{% endif %}{%endif -%}
-{%- if module.name=="multiport"%} {%if module.value is defined %} --dports {{ module.value}}{% endif %}{%endif -%}
+{%- if module.name=="state"%} {% if module.value is defined %} --state {{ module.value }}{% endif %}{% endif -%}
+{%- if module.name=="conntrack"%} {% if module.value is defined %} --ctstate {{ module.value}}{% endif %}{% endif -%}
+{%- if module.name=="helper"%} {% if module.value is defined %} --helper {{ module.value}}{% endif %}{% endif -%}
+{%- if module.name=="limit"%} {% if module.value is defined %} --limit {{ module.value}}{% endif %}{% endif -%}
+{%- if module.name=="multiport"%} {% if module.value is defined %} --dports {{ module.value}}{% endif %}{% endif -%}
 {% endfor -%}
 {% endif %}
- -j {{ rules.target | default ("ACCEPT") }} -m comment --comment "{{ rules.name }}" {%if rules.target is defined and rules.target=='LOG'%} --log-prefix {{log_prefix | default('"Iptables Logged : "')}} {%endif%}
+ -j {{ rules.target | default ("ACCEPT") }} -m comment --comment "{{ rules.name }}" {% if rules.target is defined and rules.target=='LOG'%} --log-prefix {{log_prefix | default('"Iptables Logged : "')}} {% endif %}
 
 {% endfor %}
 COMMIT
