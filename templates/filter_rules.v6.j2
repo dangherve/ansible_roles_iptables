@@ -1,5 +1,5 @@
 *filter
-:INPUT DROP [0:0]
-:FORWARD DROP [0:0]
-:OUTPUT DROP [0:0]
+:INPUT {{ iptables_v6_filter_input_policy }} [0:0]
+:FORWARD {{ iptables_v6_filter_forward_policy }} [0:0]
+:OUTPUT {{ iptables_v6_filter_output_policy }} [0:0]
 COMMIT
