@@ -8,3 +8,4 @@ iptables_pkg:
   - iptables-persistent
   - conntrack
   - fail2ban
+  - iptables

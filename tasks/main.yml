@@ -6,16 +6,10 @@
 - include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
 
-
-
 - name: Check if iptables fail2ban rules are loaded
   shell: iptables -L INPUT -nv
   register: iptables_fail2ban_rules
   changed_when: False
-
-- name: Install firewall's package
-  apt: name={{ iptables_pkg }} state=present update_cache=yes
-  when: ansible_os_family=="Debian"
 
 - name: Generate config file iptables
   template:

@@ -1,6 +1,8 @@
-- name: Install iptables
+
+- name: Install package
   apt:
-    name: iptables
-    update_cache: yes
+    name: "{{ iptables_pkg }}"
     state: present
+    update_cache: yes
+  when: ansible_os_family=="Debian"
 
